@@ -1,3 +1,3 @@
 # STRESSER
 
-chmod +x ./ngrok && ./ngrok
+chmod +x ./ngrok.sh && ./ngrok.sh
