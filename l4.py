@@ -10,7 +10,7 @@ import time
 ip = ""
 port = 80
 period = 10
-url = " /?=" + str(random.randint(0,100))
+url = "//?=" + str(random.randint(0,200))
 for n,args in enumerate(sys.argv):
     if args=="-i":
         ip = str(sys.argv[n+1])
