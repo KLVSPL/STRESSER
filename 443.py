@@ -12,7 +12,7 @@ for n,args in enumerate(sys.argv):
     if args=="-path":
         path = str(sys.argv[n+1])
 port = int(443)
-protocol = str("GET")
+protocol = str("GET ")
 path = ""
 
 useragents = [""]
