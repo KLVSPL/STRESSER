@@ -57,7 +57,7 @@ acceptall = [
 def rqheader():
     connection = "Connection: keep-alive\r\n"
     accept = Choice(acceptall)
-    referer = "Referer: https://lpu.mrooms.net/\r\n"
+    referer = "Referer: "+ "https://" + ip + "\r\n"
     useragent = "User-Agent: " + Choice(useragents) + "\r\n"
     content = "Content-Type: application/x-www-form-urlencoded\r\n"
     length = "Content-Length: 0 \r\n"
