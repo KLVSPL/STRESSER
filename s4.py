@@ -9,6 +9,9 @@ out_file = "proxy.txt"
 f = open(out_file,'wb')
 socks4_api = [
 	"https://api.proxyscrape.com/?request=displayproxies&proxytype=http&timeout=2000&country=all",
+    "https://multiproxy.org/txt_all/proxy.txt",
+    "https://api.openproxylist.xyz/http.txt",
+    "https://www.proxyscan.io/download?type=http",
 ]
 for api in socks4_api:
 	try:
