@@ -125,6 +125,8 @@ func main() {
 	fmt.Scanln(&ip)
 	fmt.Print("[PORT]:")
 	fmt.Scanln(&port)
+	fmt.Print("[PATH]:")
+	fmt.Scanln(&path)
 	fmt.Print("[THREADS]:")
 	fmt.Scanln(&threads)
 	fmt.Print("[DURATION]:")
